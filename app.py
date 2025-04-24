@@ -7,11 +7,16 @@ from firebase_admin import credentials, db
 import os
 import re
 
-# Initialize Firebase using Streamlit secrets
-firebase_config = st.secrets["firebase"]
+import json
 
+# Convert st.secrets["firebase"] to JSON string and then load as dict
+firebase_config = json.loads(json.dumps(st.secrets["firebase"]))
+
+# Create Firebase credentials from the loaded dict
+cred = credentials.Certificate(firebase_config)
+
+# Initialize the app only once
 if not firebase_admin._apps:
-    cred = credentials.Certificate(firebase_config)
     firebase_admin.initialize_app(cred, {
         'databaseURL': 'https://ai-task-allocation-default-rtdb.firebaseio.com/'
     })
